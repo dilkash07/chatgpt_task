@@ -36,7 +36,9 @@ exports.getPost = async (req, res) => {
   try {
     const { userId } = req.user;
 
-    const post = await Post.findById(userId);
+    const post = await Post.findById(userId)
+      .populate("author", "name email")
+      .exec();
 
     res.status(200).json({
       success: true,
@@ -54,7 +56,7 @@ exports.getPost = async (req, res) => {
 
 exports.getAllPost = async (req, res) => {
   try {
-    const post = await Post.find({});
+    const post = await Post.find().populate("author", "name email").exec();
 
     res.status(200).json({
       success: true,

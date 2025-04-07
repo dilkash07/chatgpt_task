@@ -1,11 +1,13 @@
 const User = require("../models/User");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const otpGenerator = require("otp-generator");
+const Otp = require("../models/Otp");
 
 exports.signup = async (req, res) => {
   try {
-    const { name, email, password, confirmPassword } = req.body;
-    if (!name || !email || !password || !confirmPassword) {
+    const { name, email, password, confirmPassword, otp } = req.body;
+    if (!name || !email || !password || !confirmPassword || !otp) {
       return res.status(401).json({
         success: false,
         message: "Please fill all the details!",
@@ -19,20 +21,23 @@ exports.signup = async (req, res) => {
       });
     }
 
-    const user = await User.findOne({ email });
-    if (user) {
+    const otpResponse = await Otp.find({ email })
+      .sort({ createdAt: -1 })
+      .limit(1);
+
+    if (otpResponse[0] !== otp) {
       return res.status(401).json({
         success: false,
-        message: "User already registered please login",
+        message: "Incorrect OTP",
       });
     }
 
-    const response = await User.create({ name, email, password });
+    const user = await User.create({ name, email, password });
 
     res.status(200).json({
       success: true,
       message: "User registered successfully",
-      response,
+      user,
     });
   } catch (error) {
     res.status(500).json({
@@ -97,6 +102,50 @@ exports.login = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Something went wrong while registered user",
+      error: error.message,
+    });
+  }
+};
+
+exports.sendOtp = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    const user = await User.findOne({ email });
+
+    if (user) {
+      return res.status(401).json({
+        success: false,
+        message: "User already registered, please login",
+      });
+    }
+
+    let otp = await otpGenerator.generate(6, {
+      upperCaseAlphabets: false,
+      lowerCaseAlphabets: false,
+      specialChars: false,
+    });
+
+    const result = await Otp.findOne({ otp });
+
+    while (result) {
+      otp = await otpGenerator.generate(6, {
+        upperCaseAlphabets: false,
+        lowerCaseAlphabets: false,
+        specialChars: false,
+      });
+    }
+
+    await Otp.create({ email, otp });
+
+    res.status(200).json({
+      success: true,
+      message: "OTP send successfully",
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Something went wrong while sending otp",
       error: error.message,
     });
   }
