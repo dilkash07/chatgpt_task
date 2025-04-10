@@ -18,8 +18,7 @@ exports.mailSender = async (email, title, body) => {
       html: `${body}`,
     });
     return sendMail;
-  } catch (err) {
+  } catch (error) {
     console.log("Something went wrong while sending email");
-    console.log(err.message);
   }
 };

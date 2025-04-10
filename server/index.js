@@ -3,6 +3,7 @@ const app = express();
 require("dotenv").config();
 const database = require("./config/database");
 const bodyParser = require("body-parser");
+const cors = require("cors");
 
 const Port = process.env.PORT || 3000;
 
@@ -12,6 +13,7 @@ const postRoutes = require("./router/Post");
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cors());
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/user", userRoutes);
 app.use("/api/v1/post", postRoutes);

@@ -10,10 +10,10 @@ const {
 } = require("../controller/Post");
 const { auth } = require("../middleware/Auth");
 
-router.post("/create_post", auth, createPost);
-router.get("/get_post", auth, getPost);
-router.get("/get_posts", auth, getAllPost);
-router.put("/update_post", auth, updatePost);
-router.delete("/delete_post", auth, deletePost);
+router.post("/create-post", auth, createPost);
+router.get("/get-post", auth, getPost);
+router.get("/get-posts", auth, getAllPost);
+router.put("/update-post", auth, updatePost);
+router.delete("/delete-post", auth, deletePost);
 
 module.exports = router;

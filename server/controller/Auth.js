@@ -7,6 +7,7 @@ const Otp = require("../models/Otp");
 exports.signup = async (req, res) => {
   try {
     const { name, email, password, confirmPassword, otp } = req.body;
+
     if (!name || !email || !password || !confirmPassword || !otp) {
       return res.status(401).json({
         success: false,
@@ -25,7 +26,7 @@ exports.signup = async (req, res) => {
       .sort({ createdAt: -1 })
       .limit(1);
 
-    if (otpResponse[0] !== otp) {
+    if (otpResponse[0].otp !== otp) {
       return res.status(401).json({
         success: false,
         message: "Incorrect OTP",
@@ -99,6 +100,7 @@ exports.login = async (req, res) => {
       });
     }
   } catch (error) {
+    console.error(error.message);
     res.status(500).json({
       success: false,
       message: "Something went wrong while registered user",

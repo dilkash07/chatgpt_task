@@ -3,8 +3,8 @@ import React from "react";
 const Home = () => {
   return (
     <>
-      <h1 className="h-screen w-screen grid place-content-center text-2xl">
-        Hello jee kiya haal chaal sabke mitron this is home page
+      <h1 className="h-full w-full grid place-content-center text-2xl">
+        Home Page
       </h1>
     </>
   );
